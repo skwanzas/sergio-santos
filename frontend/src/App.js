@@ -11,6 +11,7 @@ import UploadDocumentos from './components/Documentos/UploadDocumentos';
 import Indicadores from './components/Indicadores/Indicadores';
 import BalancoPrevisional from './components/Balanco/BalancoPrevisional';
 import TesourariaMensal from './components/Tesouraria/TesourariaMensal';
+import BalancoExecucao from './components/BalancoExecucao/BalancoExecucao';
 
 /**
  * Componente de Rota Privada
@@ -133,6 +134,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <UploadDocumentos />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/execucao"
+                            element={
+                                <PrivateRoute>
+                                    <BalancoExecucao />
                                 </PrivateRoute>
                             }
                         />

@@ -337,5 +337,43 @@ export const indicadoresService = {
     }
 };
 
+// =====================================================
+// SERVIÇOS DE BALANÇO DE EXECUÇÃO
+// =====================================================
+
+export const balancoExecucaoService = {
+    /**
+     * Obter comparação previsto vs realizado
+     */
+    getComparacao: async (exercicio) => {
+        const response = await api.get(`/balanco-execucao/${exercicio}/comparacao`);
+        return response.data;
+    },
+
+    /**
+     * Obter desvios mensais
+     */
+    getDesviosMensais: async (exercicio) => {
+        const response = await api.get(`/balanco-execucao/${exercicio}/desvios-mensais`);
+        return response.data;
+    },
+
+    /**
+     * Obter análise de variações
+     */
+    getAnaliseVariacoes: async (exercicio) => {
+        const response = await api.get(`/balanco-execucao/${exercicio}/analise-variacoes`);
+        return response.data;
+    },
+
+    /**
+     * Obter dashboard de execução
+     */
+    getDashboard: async (exercicio) => {
+        const response = await api.get(`/balanco-execucao/${exercicio}/dashboard`);
+        return response.data;
+    }
+};
+
 // Exportar instância da API também
 export default api;
