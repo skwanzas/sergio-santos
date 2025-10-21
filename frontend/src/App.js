@@ -14,6 +14,7 @@ import TesourariaMensal from './components/Tesouraria/TesourariaMensal';
 import BalancoExecucao from './components/BalancoExecucao/BalancoExecucao';
 import DashboardExecutivo from './components/DashboardExecutivo/DashboardExecutivo';
 import CashFlow from './components/CashFlow/CashFlow';
+import OrcamentosParciais from './components/OrcamentosParciais/OrcamentosParciais';
 
 /**
  * Componente de Rota Privada
@@ -163,6 +164,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <CashFlow />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/orcamentos-parciais"
+                            element={
+                                <PrivateRoute>
+                                    <OrcamentosParciais />
                                 </PrivateRoute>
                             }
                         />

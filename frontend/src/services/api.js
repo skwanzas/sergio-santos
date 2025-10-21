@@ -453,6 +453,78 @@ export const cashFlowService = {
 };
 
 // =====================================================
+// SERVIÇOS DE ORÇAMENTOS PARCIAIS
+// =====================================================
+
+export const orcamentosParciaisService = {
+    /**
+     * Salvar/Atualizar Orçamento Parcial
+     */
+    saveOrcamento: async (orcamentoData) => {
+        const response = await api.post('/orcamentos-parciais', orcamentoData);
+        return response.data;
+    },
+
+    /**
+     * Listar Orçamentos
+     */
+    listOrcamentos: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/orcamentos-parciais${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Orçamento específico
+     */
+    getOrcamento: async (id) => {
+        const response = await api.get(`/orcamentos-parciais/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Deletar Orçamento
+     */
+    deleteOrcamento: async (id) => {
+        const response = await api.delete(`/orcamentos-parciais/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Aprovar Orçamento
+     */
+    aprovarOrcamento: async (id) => {
+        const response = await api.post(`/orcamentos-parciais/${id}/aprovar`);
+        return response.data;
+    },
+
+    /**
+     * Atualizar Status
+     */
+    updateStatus: async (id, status) => {
+        const response = await api.patch(`/orcamentos-parciais/${id}/status`, { status });
+        return response.data;
+    },
+
+    /**
+     * Comparar Múltiplos Orçamentos
+     */
+    compararOrcamentos: async (ids) => {
+        const idsString = Array.isArray(ids) ? ids.join(',') : ids;
+        const response = await api.get(`/orcamentos-parciais/comparar/multiplos?ids=${idsString}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Consolidação por Exercício
+     */
+    getConsolidacao: async (exercicio) => {
+        const response = await api.get(`/orcamentos-parciais/consolidacao/${exercicio}`);
+        return response.data;
+    }
+};
+
+// =====================================================
 // SERVIÇOS DE RELATÓRIOS (PDF/Excel)
 // =====================================================
 
