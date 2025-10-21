@@ -16,6 +16,7 @@ const db = require('./src/config/database');
 const authRoutes = require('./src/routes/auth');
 const drRoutes = require('./src/routes/dr');
 const balancoRoutes = require('./src/routes/balanco');
+const documentosRoutes = require('./src/routes/documentos');
 
 const app = express();
 
@@ -81,6 +82,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/dr', drRoutes);
 app.use('/api/balanco', balancoRoutes);
+app.use('/api/documentos', documentosRoutes);
 
 // Rota 404 - Não encontrado
 app.use('/api/*', (req, res) => {
