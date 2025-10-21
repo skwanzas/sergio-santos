@@ -10,6 +10,7 @@ import {
     CheckCircle, Download, RefreshCw, DollarSign, Wallet,
     ArrowUpCircle, ArrowDownCircle, Activity
 } from 'lucide-react';
+import ExportButtons from '../common/ExportButtons';
 
 const MESES = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -261,6 +262,7 @@ const TesourariaMensal = () => {
                                 Visão Anual
                             </button>
                         </div>
+                        <ExportButtons exercicio={exercicio} tipo="tesouraria" />
                     </div>
                 </div>
             </div>

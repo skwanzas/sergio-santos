@@ -452,5 +452,172 @@ export const cashFlowService = {
     }
 };
 
+// =====================================================
+// SERVIÇOS DE RELATÓRIOS (PDF/Excel)
+// =====================================================
+
+export const relatoriosService = {
+    /**
+     * Exportar DR em PDF
+     */
+    exportarDRPDF: async (exercicio) => {
+        const response = await api.get(`/relatorios/dr/${exercicio}/pdf`, {
+            responseType: 'blob'
+        });
+
+        // Criar link de download
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `DR-${exercicio}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'PDF exportado com sucesso' };
+    },
+
+    /**
+     * Exportar DR em Excel
+     */
+    exportarDRExcel: async (exercicio) => {
+        const response = await api.get(`/relatorios/dr/${exercicio}/excel`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `DR-${exercicio}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'Excel exportado com sucesso' };
+    },
+
+    /**
+     * Exportar Balanço em PDF
+     */
+    exportarBalancoPDF: async (exercicio) => {
+        const response = await api.get(`/relatorios/balanco/${exercicio}/pdf`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Balanco-${exercicio}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'PDF exportado com sucesso' };
+    },
+
+    /**
+     * Exportar Balanço em Excel
+     */
+    exportarBalancoExcel: async (exercicio) => {
+        const response = await api.get(`/relatorios/balanco/${exercicio}/excel`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Balanco-${exercicio}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'Excel exportado com sucesso' };
+    },
+
+    /**
+     * Exportar Tesouraria em PDF
+     */
+    exportarTesourariaPDF: async (exercicio) => {
+        const response = await api.get(`/relatorios/tesouraria/${exercicio}/pdf`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Tesouraria-${exercicio}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'PDF exportado com sucesso' };
+    },
+
+    /**
+     * Exportar Tesouraria em Excel
+     */
+    exportarTesourariaExcel: async (exercicio) => {
+        const response = await api.get(`/relatorios/tesouraria/${exercicio}/excel`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Tesouraria-${exercicio}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'Excel exportado com sucesso' };
+    },
+
+    /**
+     * Exportar Cash Flow em PDF
+     */
+    exportarCashFlowPDF: async (exercicio) => {
+        const response = await api.get(`/relatorios/cash-flow/${exercicio}/pdf`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `CashFlow-${exercicio}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'PDF exportado com sucesso' };
+    },
+
+    /**
+     * Exportar Cash Flow em Excel
+     */
+    exportarCashFlowExcel: async (exercicio) => {
+        const response = await api.get(`/relatorios/cash-flow/${exercicio}/excel`, {
+            responseType: 'blob'
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `CashFlow-${exercicio}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        return { success: true, message: 'Excel exportado com sucesso' };
+    }
+};
+
 // Exportar instância da API também
 export default api;

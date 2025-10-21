@@ -6,6 +6,7 @@ import {
     Download, Upload, RefreshCw, BarChart3, Home, Building,
     Wallet, CreditCard, DollarSign, Scale
 } from 'lucide-react';
+import ExportButtons from '../common/ExportButtons';
 
 const BalancoPrevisional = () => {
     const { user } = useAuth();
@@ -289,6 +290,7 @@ const BalancoPrevisional = () => {
                             <RefreshCw className="h-4 w-4" />
                             Novo
                         </button>
+                        <ExportButtons exercicio={exercicio} tipo="balanco" />
                     </div>
                 </div>
 

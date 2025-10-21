@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { drService } from '../../services/api';
 import { ArrowLeft, Save, DollarSign, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import ExportButtons from '../common/ExportButtons';
 
 const DemonstracaoResultados = () => {
     const navigate = useNavigate();
@@ -198,6 +199,7 @@ const DemonstracaoResultados = () => {
                                     <option key={year} value={year}>{year}</option>
                                 ))}
                             </select>
+                            <ExportButtons exercicio={exercicio} tipo="dr" />
                         </div>
                     </div>
                 </div>

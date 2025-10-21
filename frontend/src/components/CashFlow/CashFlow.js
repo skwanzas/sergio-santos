@@ -10,6 +10,7 @@ import {
     CheckCircle, Download, RefreshCw, DollarSign, Activity,
     ArrowUpCircle, ArrowDownCircle, Zap, Info
 } from 'lucide-react';
+import ExportButtons from '../common/ExportButtons';
 
 const CashFlow = () => {
     const { user } = useAuth();
@@ -275,6 +276,7 @@ const CashFlow = () => {
                             <Zap className="h-4 w-4" />
                             Gerar Automático
                         </button>
+                        <ExportButtons exercicio={exercicio} tipo="cash-flow" />
                     </div>
                 </div>
 
