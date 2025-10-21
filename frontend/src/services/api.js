@@ -754,6 +754,100 @@ export const viabilidadeService = {
 };
 
 // =====================================================
+// SERVIÇOS DE CENTROS DE CUSTO
+// =====================================================
+
+export const centroCustoService = {
+    // Centros de Custo
+    saveCentroCusto: async (centroData) => {
+        const response = await api.post('/centros-custo', centroData);
+        return response.data;
+    },
+
+    listCentrosCusto: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/centros-custo${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    getCentroCusto: async (id) => {
+        const response = await api.get(`/centros-custo/${id}`);
+        return response.data;
+    },
+
+    deleteCentroCusto: async (id) => {
+        const response = await api.delete(`/centros-custo/${id}`);
+        return response.data;
+    },
+
+    // Lançamentos
+    saveLancamento: async (lancamentoData) => {
+        const response = await api.post('/centros-custo/lancamentos/save', lancamentoData);
+        return response.data;
+    },
+
+    listLancamentos: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/centros-custo/lancamentos/list${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    deleteLancamento: async (id) => {
+        const response = await api.delete(`/centros-custo/lancamentos/${id}`);
+        return response.data;
+    },
+
+    // Análises
+    getCustosPorCentroMes: async (exercicio, mes) => {
+        const response = await api.get(`/centros-custo/analise/por-centro-mes?exercicio=${exercicio}&mes=${mes}`);
+        return response.data;
+    },
+
+    getCustosPorCentroAno: async (exercicio) => {
+        const response = await api.get(`/centros-custo/analise/por-centro-ano?exercicio=${exercicio}`);
+        return response.data;
+    },
+
+    getCustosPorCategoria: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/centros-custo/analise/por-categoria${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    getRanking: async (exercicio) => {
+        const response = await api.get(`/centros-custo/analise/ranking?exercicio=${exercicio}`);
+        return response.data;
+    },
+
+    compararCentros: async (centros_ids, exercicio) => {
+        const response = await api.get(`/centros-custo/analise/comparar?centros_ids=${centros_ids}&exercicio=${exercicio}`);
+        return response.data;
+    },
+
+    getDashboard: async (exercicio) => {
+        const response = await api.get(`/centros-custo/analise/dashboard?exercicio=${exercicio}`);
+        return response.data;
+    },
+
+    // Rateios
+    createRateio: async (rateioData) => {
+        const response = await api.post('/centros-custo/rateios/create', rateioData);
+        return response.data;
+    },
+
+    listRateios: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/centros-custo/rateios/list${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    getRateioDetalhes: async (id) => {
+        const response = await api.get(`/centros-custo/rateios/${id}/detalhes`);
+        return response.data;
+    }
+};
+
+// =====================================================
 // SERVIÇOS DE RELATÓRIOS (PDF/Excel)
 // =====================================================
 
