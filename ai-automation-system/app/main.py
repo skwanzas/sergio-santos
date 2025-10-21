@@ -8,8 +8,8 @@ from fastapi.responses import JSONResponse
 import logging
 
 from app.core.config import settings
-from app.api.v1 import auth, products
-# from app.api.v1 import agents, analytics  # Será criado depois
+from app.api.v1 import auth, products, agents
+# from app.api.v1 import analytics  # Será criado depois
 
 # Configurar logging
 logging.basicConfig(
@@ -87,7 +87,7 @@ def health_check():
 # Incluir routers
 app.include_router(auth.router, prefix=f"{settings.API_V1_PREFIX}/auth", tags=["Authentication"])
 app.include_router(products.router, prefix=f"{settings.API_V1_PREFIX}/products", tags=["Products"])
-# app.include_router(agents.router, prefix=f"{settings.API_V1_PREFIX}/agents", tags=["Agents"])  # Fase 6
+app.include_router(agents.router, prefix=f"{settings.API_V1_PREFIX}/agents", tags=["AI Agents"])
 # app.include_router(analytics.router, prefix=f"{settings.API_V1_PREFIX}/analytics", tags=["Analytics"])  # Fase 10
 
 # Exception handlers
