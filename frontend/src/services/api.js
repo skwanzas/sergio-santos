@@ -198,31 +198,50 @@ export const balancoService = {
 
 export const tesourariaService = {
     /**
-     * Criar/Atualizar Plano de Tesouraria
+     * Criar/Atualizar Tesouraria Mensal
      */
-    saveTesouraria: async (exercicio, mes, tipo, dados) => {
-        const response = await api.post('/tesouraria', {
-            exercicio,
-            mes,
-            tipo,
-            dados
-        });
+    saveTesouraria: async (tesourariaData) => {
+        const response = await api.post('/tesouraria', tesourariaData);
         return response.data;
     },
 
     /**
      * Obter Tesouraria de um mês específico
      */
-    getTesouraria: async (exercicio, mes, tipo) => {
-        const response = await api.get(`/tesouraria/${exercicio}/${mes}/${tipo}`);
+    getTesouraria: async (exercicio, mes) => {
+        const response = await api.get(`/tesouraria/${exercicio}/${mes}`);
         return response.data;
     },
 
     /**
-     * Obter todos os meses de um exercício
+     * Listar todas as tesourarias de um exercício (12 meses)
      */
-    getTesourariaAnual: async (exercicio, tipo) => {
-        const response = await api.get(`/tesouraria/${exercicio}/${tipo}`);
+    listTesouraria: async (exercicio) => {
+        const response = await api.get(`/tesouraria/${exercicio}`);
+        return response.data;
+    },
+
+    /**
+     * Obter resumo anual
+     */
+    getResumoAnual: async (exercicio) => {
+        const response = await api.get(`/tesouraria/${exercicio}/resumo`);
+        return response.data;
+    },
+
+    /**
+     * Deletar tesouraria de um mês
+     */
+    deleteTesouraria: async (exercicio, mes) => {
+        const response = await api.delete(`/tesouraria/${exercicio}/${mes}`);
+        return response.data;
+    },
+
+    /**
+     * Obter evolução de indicadores ao longo dos meses
+     */
+    getEvolucao: async (exercicio) => {
+        const response = await api.get(`/tesouraria/${exercicio}`);
         return response.data;
     }
 };
@@ -306,6 +325,14 @@ export const indicadoresService = {
      */
     getLagIndicators: async (exercicio) => {
         const response = await api.get(`/indicadores/${exercicio}/lag`);
+        return response.data;
+    },
+
+    /**
+     * Obter evolução de indicadores ao longo de vários anos
+     */
+    getEvolucao: async (anos) => {
+        const response = await api.get(`/indicadores/evolucao/${anos}`);
         return response.data;
     }
 };
