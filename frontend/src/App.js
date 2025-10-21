@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import DemonstracaoResultados from './components/DR/DemonstracaoResultados';
 import UploadDocumentos from './components/Documentos/UploadDocumentos';
 import Indicadores from './components/Indicadores/Indicadores';
+import BalancoPrevisional from './components/Balanco/BalancoPrevisional';
 
 /**
  * Componente de Rota Privada
@@ -103,16 +104,7 @@ function App() {
                             path="/balanco"
                             element={
                                 <PrivateRoute>
-                                    <div className="container-app">
-                                        <div className="card">
-                                            <h2 className="text-2xl font-bold mb-4">
-                                                Balanço Previsional
-                                            </h2>
-                                            <p className="text-gray-600">
-                                                Módulo em desenvolvimento...
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <BalancoPrevisional />
                                 </PrivateRoute>
                             }
                         />
