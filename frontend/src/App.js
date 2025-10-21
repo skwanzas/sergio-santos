@@ -12,6 +12,7 @@ import Indicadores from './components/Indicadores/Indicadores';
 import BalancoPrevisional from './components/Balanco/BalancoPrevisional';
 import TesourariaMensal from './components/Tesouraria/TesourariaMensal';
 import BalancoExecucao from './components/BalancoExecucao/BalancoExecucao';
+import DashboardExecutivo from './components/DashboardExecutivo/DashboardExecutivo';
 
 /**
  * Componente de Rota Privada
@@ -143,6 +144,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <BalancoExecucao />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/dashboard-executivo"
+                            element={
+                                <PrivateRoute>
+                                    <DashboardExecutivo />
                                 </PrivateRoute>
                             }
                         />

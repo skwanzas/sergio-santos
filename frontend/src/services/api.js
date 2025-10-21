@@ -375,5 +375,28 @@ export const balancoExecucaoService = {
     }
 };
 
+// =====================================================
+// SERVIÇOS DE DASHBOARD EXECUTIVO
+// =====================================================
+
+export const dashboardService = {
+    /**
+     * Obter dashboard consolidado completo
+     */
+    getDashboardConsolidado: async (exercicio) => {
+        const response = await api.get(`/dashboard/${exercicio}`);
+        return response.data;
+    },
+
+    /**
+     * Obter evolução de KPIs ao longo dos anos
+     */
+    getEvolucaoKPIs: async (anos) => {
+        // anos formato: "2023,2024,2025"
+        const response = await api.get(`/dashboard/evolucao/${anos}`);
+        return response.data;
+    }
+};
+
 // Exportar instância da API também
 export default api;
