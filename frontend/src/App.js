@@ -7,6 +7,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard/Dashboard';
 import DemonstracaoResultados from './components/DR/DemonstracaoResultados';
+import UploadDocumentos from './components/Documentos/UploadDocumentos';
 
 /**
  * Componente de Rota Privada
@@ -155,19 +156,7 @@ function App() {
                             path="/documentos"
                             element={
                                 <PrivateRoute>
-                                    <div className="container-app">
-                                        <div className="card">
-                                            <h2 className="text-2xl font-bold mb-4">
-                                                Gestão de Documentos
-                                            </h2>
-                                            <p className="text-gray-600">
-                                                Upload e classificação automática com OCR e IA
-                                            </p>
-                                            <p className="text-gray-600 mt-2">
-                                                Módulo em desenvolvimento...
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <UploadDocumentos />
                                 </PrivateRoute>
                             }
                         />
