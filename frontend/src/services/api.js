@@ -453,6 +453,85 @@ export const cashFlowService = {
 };
 
 // =====================================================
+// SERVIÇOS DE NOTIFICAÇÕES
+// =====================================================
+
+export const notificacoesService = {
+    /**
+     * Criar Notificação
+     */
+    createNotificacao: async (notificacaoData) => {
+        const response = await api.post('/notificacoes', notificacaoData);
+        return response.data;
+    },
+
+    /**
+     * Listar Notificações
+     */
+    listNotificacoes: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/notificacoes${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Notificação específica
+     */
+    getNotificacao: async (id) => {
+        const response = await api.get(`/notificacoes/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Deletar Notificação
+     */
+    deleteNotificacao: async (id) => {
+        const response = await api.delete(`/notificacoes/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Marcar como Lida
+     */
+    marcarComoLida: async (id) => {
+        const response = await api.patch(`/notificacoes/${id}/marcar-lida`);
+        return response.data;
+    },
+
+    /**
+     * Marcar Todas como Lidas
+     */
+    marcarTodasComoLidas: async () => {
+        const response = await api.post('/notificacoes/marcar-todas-lidas');
+        return response.data;
+    },
+
+    /**
+     * Deletar Todas Lidas
+     */
+    deletarTodasLidas: async () => {
+        const response = await api.delete('/notificacoes/deletar-todas-lidas/bulk');
+        return response.data;
+    },
+
+    /**
+     * Contar Não Lidas
+     */
+    contarNaoLidas: async () => {
+        const response = await api.get('/notificacoes/contar/nao-lidas');
+        return response.data;
+    },
+
+    /**
+     * Limpar Expiradas
+     */
+    limparExpiradas: async () => {
+        const response = await api.post('/notificacoes/limpar-expiradas');
+        return response.data;
+    }
+};
+
+// =====================================================
 // SERVIÇOS DE ORÇAMENTOS PARCIAIS
 // =====================================================
 

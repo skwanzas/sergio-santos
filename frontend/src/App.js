@@ -15,6 +15,7 @@ import BalancoExecucao from './components/BalancoExecucao/BalancoExecucao';
 import DashboardExecutivo from './components/DashboardExecutivo/DashboardExecutivo';
 import CashFlow from './components/CashFlow/CashFlow';
 import OrcamentosParciais from './components/OrcamentosParciais/OrcamentosParciais';
+import NotificationCenter from './components/Notifications/NotificationCenter';
 
 /**
  * Componente de Rota Privada
@@ -173,6 +174,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <OrcamentosParciais />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/notificacoes"
+                            element={
+                                <PrivateRoute>
+                                    <NotificationCenter />
                                 </PrivateRoute>
                             }
                         />
