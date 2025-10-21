@@ -18,6 +18,7 @@ import OrcamentosParciais from './components/OrcamentosParciais/OrcamentosParcia
 import NotificationCenter from './components/Notifications/NotificationCenter';
 import Rentabilidade from './components/Rentabilidade/Rentabilidade';
 import Viabilidade from './components/Viabilidade/Viabilidade';
+import CentroCusto from './components/CentroCusto/CentroCusto';
 
 /**
  * Componente de Rota Privada
@@ -203,6 +204,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <Viabilidade />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/centros-custo"
+                            element={
+                                <PrivateRoute>
+                                    <CentroCusto />
                                 </PrivateRoute>
                             }
                         />

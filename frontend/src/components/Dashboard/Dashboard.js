@@ -12,7 +12,8 @@ import {
     DollarSign,
     Target,
     Calculator,
-    Leaf
+    Leaf,
+    Layers
 } from 'lucide-react';
 import NotificationBell from '../Notifications/NotificationBell';
 
@@ -69,6 +70,13 @@ const Dashboard = () => {
             description: 'Análise VPL, TIR e Payback',
             path: '/viabilidade',
             color: 'bg-teal-500'
+        },
+        {
+            icon: <Layers className="w-6 h-6" />,
+            title: 'Centros de Custo',
+            description: 'Gestão e análise de custos',
+            path: '/centros-custo',
+            color: 'bg-red-500'
         },
         {
             icon: <TrendingUp className="w-6 h-6" />,
