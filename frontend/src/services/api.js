@@ -398,5 +398,59 @@ export const dashboardService = {
     }
 };
 
+// =====================================================
+// SERVIÇOS DE CASH FLOW
+// =====================================================
+
+export const cashFlowService = {
+    /**
+     * Salvar/Atualizar Cash Flow
+     */
+    saveCashFlow: async (cashFlowData) => {
+        const response = await api.post('/cash-flow', cashFlowData);
+        return response.data;
+    },
+
+    /**
+     * Obter Cash Flow de um exercício
+     */
+    getCashFlow: async (exercicio) => {
+        const response = await api.get(`/cash-flow/${exercicio}`);
+        return response.data;
+    },
+
+    /**
+     * Listar todos os Cash Flows
+     */
+    listCashFlows: async () => {
+        const response = await api.get('/cash-flow');
+        return response.data;
+    },
+
+    /**
+     * Gerar Cash Flow automaticamente a partir da Tesouraria
+     */
+    gerarAutomatico: async (exercicio) => {
+        const response = await api.post(`/cash-flow/${exercicio}/gerar-automatico`);
+        return response.data;
+    },
+
+    /**
+     * Obter análise do Cash Flow
+     */
+    getAnalise: async (exercicio) => {
+        const response = await api.get(`/cash-flow/${exercicio}/analise`);
+        return response.data;
+    },
+
+    /**
+     * Deletar Cash Flow
+     */
+    deleteCashFlow: async (exercicio) => {
+        const response = await api.delete(`/cash-flow/${exercicio}`);
+        return response.data;
+    }
+};
+
 // Exportar instância da API também
 export default api;

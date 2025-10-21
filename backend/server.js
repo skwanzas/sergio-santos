@@ -21,6 +21,7 @@ const indicadoresRoutes = require('./src/routes/indicadores');
 const tesourariaRoutes = require('./src/routes/tesouraria');
 const balancoExecucaoRoutes = require('./src/routes/balancoExecucao');
 const dashboardRoutes = require('./src/routes/dashboard');
+const cashFlowRoutes = require('./src/routes/cashFlow');
 
 const app = express();
 
@@ -91,6 +92,7 @@ app.use('/api/indicadores', indicadoresRoutes);
 app.use('/api/tesouraria', tesourariaRoutes);
 app.use('/api/balanco-execucao', balancoExecucaoRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/cash-flow', cashFlowRoutes);
 
 // Rota 404 - Não encontrado
 app.use('/api/*', (req, res) => {

@@ -13,6 +13,7 @@ import BalancoPrevisional from './components/Balanco/BalancoPrevisional';
 import TesourariaMensal from './components/Tesouraria/TesourariaMensal';
 import BalancoExecucao from './components/BalancoExecucao/BalancoExecucao';
 import DashboardExecutivo from './components/DashboardExecutivo/DashboardExecutivo';
+import CashFlow from './components/CashFlow/CashFlow';
 
 /**
  * Componente de Rota Privada
@@ -153,6 +154,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <DashboardExecutivo />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/cash-flow"
+                            element={
+                                <PrivateRoute>
+                                    <CashFlow />
                                 </PrivateRoute>
                             }
                         />
