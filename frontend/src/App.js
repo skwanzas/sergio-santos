@@ -1,0 +1,208 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+
+// Componentes
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import Dashboard from './components/Dashboard/Dashboard';
+
+/**
+ * Componente de Rota Privada
+ * Redireciona para login se não estiver autenticado
+ */
+const PrivateRoute = ({ children }) => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="spinner h-12 w-12 mx-auto mb-4"></div>
+                    <p className="text-gray-600">A carregar...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+/**
+ * Componente de Rota Pública
+ * Redireciona para dashboard se já estiver autenticado
+ */
+const PublicRoute = ({ children }) => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="spinner h-12 w-12 mx-auto mb-4"></div>
+                    <p className="text-gray-600">A carregar...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return isAuthenticated ? <Navigate to="/dashboard" /> : children;
+};
+
+/**
+ * Componente Principal da Aplicação
+ */
+function App() {
+    return (
+        <Router>
+            <AuthProvider>
+                <div className="App">
+                    <Routes>
+                        {/* Rotas Públicas */}
+                        <Route
+                            path="/login"
+                            element={
+                                <PublicRoute>
+                                    <Login />
+                                </PublicRoute>
+                            }
+                        />
+                        <Route
+                            path="/register"
+                            element={
+                                <PublicRoute>
+                                    <Register />
+                                </PublicRoute>
+                            }
+                        />
+
+                        {/* Rotas Privadas */}
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <PrivateRoute>
+                                    <Dashboard />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        {/* Placeholder para outras rotas */}
+                        <Route
+                            path="/dr"
+                            element={
+                                <PrivateRoute>
+                                    <div className="container-app">
+                                        <div className="card">
+                                            <h2 className="text-2xl font-bold mb-4">
+                                                Demonstração de Resultados
+                                            </h2>
+                                            <p className="text-gray-600">
+                                                Módulo em desenvolvimento...
+                                            </p>
+                                        </div>
+                                    </div>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/balanco"
+                            element={
+                                <PrivateRoute>
+                                    <div className="container-app">
+                                        <div className="card">
+                                            <h2 className="text-2xl font-bold mb-4">
+                                                Balanço Previsional
+                                            </h2>
+                                            <p className="text-gray-600">
+                                                Módulo em desenvolvimento...
+                                            </p>
+                                        </div>
+                                    </div>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/tesouraria"
+                            element={
+                                <PrivateRoute>
+                                    <div className="container-app">
+                                        <div className="card">
+                                            <h2 className="text-2xl font-bold mb-4">
+                                                Plano de Tesouraria
+                                            </h2>
+                                            <p className="text-gray-600">
+                                                Módulo em desenvolvimento...
+                                            </p>
+                                        </div>
+                                    </div>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/indicadores"
+                            element={
+                                <PrivateRoute>
+                                    <div className="container-app">
+                                        <div className="card">
+                                            <h2 className="text-2xl font-bold mb-4">
+                                                Indicadores Financeiros
+                                            </h2>
+                                            <p className="text-gray-600">
+                                                Módulo em desenvolvimento...
+                                            </p>
+                                        </div>
+                                    </div>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/documentos"
+                            element={
+                                <PrivateRoute>
+                                    <div className="container-app">
+                                        <div className="card">
+                                            <h2 className="text-2xl font-bold mb-4">
+                                                Gestão de Documentos
+                                            </h2>
+                                            <p className="text-gray-600">
+                                                Upload e classificação automática com OCR e IA
+                                            </p>
+                                            <p className="text-gray-600 mt-2">
+                                                Módulo em desenvolvimento...
+                                            </p>
+                                        </div>
+                                    </div>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        {/* Rota Padrão */}
+                        <Route path="/" element={<Navigate to="/dashboard" />} />
+
+                        {/* 404 - Not Found */}
+                        <Route
+                            path="*"
+                            element={
+                                <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                                    <div className="text-center">
+                                        <h1 className="text-6xl font-bold text-gray-800 mb-4">404</h1>
+                                        <p className="text-xl text-gray-600 mb-8">Página não encontrada</p>
+                                        <a href="/dashboard" className="btn-primary">
+                                            Voltar ao Dashboard
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        />
+                    </Routes>
+                </div>
+            </AuthProvider>
+        </Router>
+    );
+}
+
+export default App;
