@@ -604,6 +604,69 @@ export const orcamentosParciaisService = {
 };
 
 // =====================================================
+// SERVIÇOS DE RENTABILIDADE POR CULTURA
+// =====================================================
+
+export const rentabilidadeService = {
+    /**
+     * Salvar/Atualizar Análise de Rentabilidade
+     */
+    saveRentabilidade: async (rentabilidadeData) => {
+        const response = await api.post('/rentabilidade', rentabilidadeData);
+        return response.data;
+    },
+
+    /**
+     * Listar Análises de Rentabilidade
+     */
+    listRentabilidade: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/rentabilidade${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Análise específica
+     */
+    getRentabilidade: async (id) => {
+        const response = await api.get(`/rentabilidade/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Deletar Análise
+     */
+    deleteRentabilidade: async (id) => {
+        const response = await api.delete(`/rentabilidade/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Comparar Culturas por Exercício
+     */
+    compararCulturas: async (exercicio) => {
+        const response = await api.get(`/rentabilidade/comparar/${exercicio}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Ranking de Rentabilidade
+     */
+    getRanking: async (exercicio) => {
+        const response = await api.get(`/rentabilidade/ranking/${exercicio}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Consolidação por Exercício
+     */
+    getConsolidacao: async (exercicio) => {
+        const response = await api.get(`/rentabilidade/consolidacao/${exercicio}`);
+        return response.data;
+    }
+};
+
+// =====================================================
 // SERVIÇOS DE RELATÓRIOS (PDF/Excel)
 // =====================================================
 

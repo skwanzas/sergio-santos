@@ -25,6 +25,7 @@ const cashFlowRoutes = require('./src/routes/cashFlow');
 const relatoriosRoutes = require('./src/routes/relatorios');
 const orcamentosParciaisRoutes = require('./src/routes/orcamentosParciais');
 const notificacoesRoutes = require('./src/routes/notificacoes');
+const rentabilidadeRoutes = require('./src/routes/rentabilidade');
 
 const app = express();
 
@@ -99,6 +100,7 @@ app.use('/api/cash-flow', cashFlowRoutes);
 app.use('/api/relatorios', relatoriosRoutes);
 app.use('/api/orcamentos-parciais', orcamentosParciaisRoutes);
 app.use('/api/notificacoes', notificacoesRoutes);
+app.use('/api/rentabilidade', rentabilidadeRoutes);
 
 // Rota 404 - Não encontrado
 app.use('/api/*', (req, res) => {

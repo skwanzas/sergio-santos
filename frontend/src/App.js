@@ -16,6 +16,7 @@ import DashboardExecutivo from './components/DashboardExecutivo/DashboardExecuti
 import CashFlow from './components/CashFlow/CashFlow';
 import OrcamentosParciais from './components/OrcamentosParciais/OrcamentosParciais';
 import NotificationCenter from './components/Notifications/NotificationCenter';
+import Rentabilidade from './components/Rentabilidade/Rentabilidade';
 
 /**
  * Componente de Rota Privada
@@ -183,6 +184,15 @@ function App() {
                             element={
                                 <PrivateRoute>
                                     <NotificationCenter />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/rentabilidade"
+                            element={
+                                <PrivateRoute>
+                                    <Rentabilidade />
                                 </PrivateRoute>
                             }
                         />
