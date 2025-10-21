@@ -8,8 +8,13 @@ import {
     Wallet,
     Upload,
     Settings,
-    LogOut
+    LogOut,
+    DollarSign,
+    Target,
+    Calculator,
+    Leaf
 } from 'lucide-react';
+import NotificationBell from '../Notifications/NotificationBell';
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -38,6 +43,34 @@ const Dashboard = () => {
             color: 'bg-purple-500'
         },
         {
+            icon: <DollarSign className="w-6 h-6" />,
+            title: 'Cash Flow',
+            description: 'Demonstração de Fluxos de Caixa',
+            path: '/cash-flow',
+            color: 'bg-cyan-500'
+        },
+        {
+            icon: <Calculator className="w-6 h-6" />,
+            title: 'Orçamentos Parciais',
+            description: 'Orçamentos por cultura e projeto',
+            path: '/orcamentos-parciais',
+            color: 'bg-indigo-500'
+        },
+        {
+            icon: <Leaf className="w-6 h-6" />,
+            title: 'Rentabilidade por Cultura',
+            description: 'Análise de rentabilidade agrícola',
+            path: '/rentabilidade',
+            color: 'bg-emerald-500'
+        },
+        {
+            icon: <Target className="w-6 h-6" />,
+            title: 'Viabilidade de Projetos',
+            description: 'Análise VPL, TIR e Payback',
+            path: '/viabilidade',
+            color: 'bg-teal-500'
+        },
+        {
             icon: <TrendingUp className="w-6 h-6" />,
             title: 'Indicadores',
             description: 'Lead e Lag Indicators',
@@ -64,6 +97,7 @@ const Dashboard = () => {
                             <p className="text-sm text-gray-600">Sistema de Gestão Financeira</p>
                         </div>
                         <div className="flex items-center space-x-4">
+                            <NotificationBell />
                             <div className="text-right">
                                 <p className="text-sm font-medium text-gray-800">{user?.nome}</p>
                                 <p className="text-xs text-gray-500 capitalize">{user?.role}</p>

@@ -26,6 +26,7 @@ const relatoriosRoutes = require('./src/routes/relatorios');
 const orcamentosParciaisRoutes = require('./src/routes/orcamentosParciais');
 const notificacoesRoutes = require('./src/routes/notificacoes');
 const rentabilidadeRoutes = require('./src/routes/rentabilidade');
+const viabilidadeRoutes = require('./src/routes/viabilidade');
 
 const app = express();
 
@@ -101,6 +102,7 @@ app.use('/api/relatorios', relatoriosRoutes);
 app.use('/api/orcamentos-parciais', orcamentosParciaisRoutes);
 app.use('/api/notificacoes', notificacoesRoutes);
 app.use('/api/rentabilidade', rentabilidadeRoutes);
+app.use('/api/viabilidade', viabilidadeRoutes);
 
 // Rota 404 - Não encontrado
 app.use('/api/*', (req, res) => {

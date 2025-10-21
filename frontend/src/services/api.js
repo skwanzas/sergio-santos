@@ -667,6 +667,93 @@ export const rentabilidadeService = {
 };
 
 // =====================================================
+// SERVIÇOS DE VIABILIDADE DE PROJETOS
+// =====================================================
+
+export const viabilidadeService = {
+    /**
+     * Salvar/Atualizar Projeto de Viabilidade
+     */
+    saveViabilidade: async (projetoData) => {
+        const response = await api.post('/viabilidade', projetoData);
+        return response.data;
+    },
+
+    /**
+     * Listar Projetos
+     */
+    listViabilidade: async (filters = {}) => {
+        const params = new URLSearchParams(filters).toString();
+        const response = await api.get(`/viabilidade${params ? `?${params}` : ''}`);
+        return response.data;
+    },
+
+    /**
+     * Obter Projeto Específico
+     */
+    getViabilidade: async (id) => {
+        const response = await api.get(`/viabilidade/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Deletar Projeto
+     */
+    deleteViabilidade: async (id) => {
+        const response = await api.delete(`/viabilidade/${id}`);
+        return response.data;
+    },
+
+    /**
+     * Salvar Fluxos de Caixa
+     */
+    saveFluxosCaixa: async (fluxosData) => {
+        const response = await api.post('/viabilidade/fluxos', fluxosData);
+        return response.data;
+    },
+
+    /**
+     * Calcular Indicadores
+     */
+    calcularIndicadores: async (id) => {
+        const response = await api.post(`/viabilidade/${id}/calcular`);
+        return response.data;
+    },
+
+    /**
+     * Aprovar/Rejeitar Projeto
+     */
+    aprovarProjeto: async (id, decisaoData) => {
+        const response = await api.post(`/viabilidade/${id}/aprovar`, decisaoData);
+        return response.data;
+    },
+
+    /**
+     * Obter Resumo de Todos os Projetos
+     */
+    getResumo: async () => {
+        const response = await api.get('/viabilidade/resumo/todos');
+        return response.data;
+    },
+
+    /**
+     * Obter Ranking por VPL
+     */
+    getRanking: async () => {
+        const response = await api.get('/viabilidade/ranking/vpl');
+        return response.data;
+    },
+
+    /**
+     * Análise de Sensibilidade
+     */
+    analiseSensibilidade: async (id, parametros) => {
+        const response = await api.post(`/viabilidade/${id}/sensibilidade`, parametros);
+        return response.data;
+    }
+};
+
+// =====================================================
 // SERVIÇOS DE RELATÓRIOS (PDF/Excel)
 // =====================================================
 
