@@ -15,6 +15,7 @@ const db = require('./src/config/database');
 // Importar rotas
 const authRoutes = require('./src/routes/auth');
 const drRoutes = require('./src/routes/dr');
+const balancoRoutes = require('./src/routes/balanco');
 
 const app = express();
 
@@ -79,6 +80,7 @@ app.get('/api/health', (req, res) => {
 // Rotas principais
 app.use('/api/auth', authRoutes);
 app.use('/api/dr', drRoutes);
+app.use('/api/balanco', balancoRoutes);
 
 // Rota 404 - Não encontrado
 app.use('/api/*', (req, res) => {

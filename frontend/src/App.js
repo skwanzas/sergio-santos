@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard/Dashboard';
+import DemonstracaoResultados from './components/DR/DemonstracaoResultados';
 
 /**
  * Componente de Rota Privada
@@ -86,21 +87,12 @@ function App() {
                             }
                         />
 
-                        {/* Placeholder para outras rotas */}
+                        {/* Demonstração de Resultados */}
                         <Route
                             path="/dr"
                             element={
                                 <PrivateRoute>
-                                    <div className="container-app">
-                                        <div className="card">
-                                            <h2 className="text-2xl font-bold mb-4">
-                                                Demonstração de Resultados
-                                            </h2>
-                                            <p className="text-gray-600">
-                                                Módulo em desenvolvimento...
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <DemonstracaoResultados />
                                 </PrivateRoute>
                             }
                         />
