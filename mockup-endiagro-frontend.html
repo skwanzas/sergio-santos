@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENDIAGRO - Sistema de Gestão Financeira</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .notification-bell:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #dc2626;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .notification-dropdown.active {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: #f9fafb;
+        }
+
+        .notification-item.unread {
+            background: #eff6ff;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            padding: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: #f9fafb;
+            color: #16a34a;
+        }
+
+        .nav-item.active {
+            color: #16a34a;
+            border-bottom-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .module {
+            display: none;
+        }
+
+        .module.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #16a34a;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.green { background: #dcfce7; }
+        .stat-icon.blue { background: #dbeafe; }
+        .stat-icon.yellow { background: #fef3c7; }
+        .stat-icon.purple { background: #f3e8ff; }
+
+        .stat-content h3 {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-content p {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #15803d;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.3);
+        }
+
+        .btn-secondary {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0369a1;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f9fafb;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-info { background: #dbeafe; color: #0284c7; }
+
+        /* Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #16a34a;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #6b7280;
+            background: none;
+            border: none;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            color: #16a34a;
+        }
+
+        .tab.active {
+            color: #16a34a;
+            border-bottom-color: #16a34a;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #16a34a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Action buttons */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .icon-btn.edit { color: #0284c7; }
+        .icon-btn.delete { color: #dc2626; }
+        .icon-btn.view { color: #16a34a; }
+
+        /* Scenario comparison */
+        .scenario-comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .scenario-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .scenario-card.base {
+            border-color: #0284c7;
+            background: #eff6ff;
+        }
+
+        .scenario-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-metric {
+            margin: 0.5rem 0;
+        }
+
+        .scenario-metric label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .scenario-metric value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🌾 ENDIAGRO - Sistema de Gestão Financeira</h1>
+        <div class="notification-bell" onclick="toggleNotifications()">
+            <span style="font-size: 1.5rem;">🔔</span>
+            <span class="notification-badge" id="notifCount">3</span>
+        </div>
+    </div>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" id="notifDropdown">
+        <div style="padding: 1rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-weight: 700;">Notificações</h3>
+            <button class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="markAllRead()">
+                Marcar todas como lidas
+            </button>
+        </div>
+        <div id="notificationList">
+            <div class="notification-item unread" onclick="markRead(this)">
+                <div style="display: flex; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <div>
+                        <p style="font-weight: 600; margin-bottom: 0.25rem;">Orçamento do Centro de Custo excedido</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Centro "Cultura de Milho" ultrapassou 90% do orçamento anual</p>
+                        <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem;">Há 2 horas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="notification-item unread" onclick="markRead(this)">
+                <div style="display: flex; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">✅</span>
+                    <div>
+                        <p style="font-weight: 600; margin-bottom: 0.25rem;">Análise de Viabilidade concluída</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Projeto "Expansão Agrícola Bengo" - VPL positivo de 45.250.000 AOA</p>
+                        <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem;">Há 5 horas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="notification-item unread" onclick="markRead(this)">
+                <div style="display: flex; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">📊</span>
+                    <div>
+                        <p style="font-weight: 600; margin-bottom: 0.25rem;">Rentabilidade por Cultura atualizada</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Análise de 2024 mostra Soja com melhor margem líquida (35.2%)</p>
+                        <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.5rem;">Há 1 dia</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <div class="nav-item active" onclick="showModule('centros-custo')">📊 Centros de Custo</div>
+        <div class="nav-item" onclick="showModule('viabilidade')">💼 Análise de Viabilidade</div>
+        <div class="nav-item" onclick="showModule('rentabilidade')">🌾 Rentabilidade por Cultura</div>
+        <div class="nav-item" onclick="showModule('notificacoes')">🔔 Central de Notificações</div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+
+        <!-- MÓDULO: CENTROS DE CUSTO -->
+        <div id="centros-custo" class="module active">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('cc-dashboard')">Dashboard</div>
+                <div class="tab" onclick="showTab('cc-centros')">Centros</div>
+                <div class="tab" onclick="showTab('cc-lancamentos')">Lançamentos</div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="cc-dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green">🏢</div>
+                        <div class="stat-content">
+                            <h3>Total de Centros</h3>
+                            <p>24</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📝</div>
+                        <div class="stat-content">
+                            <h3>Lançamentos (mês)</h3>
+                            <p>156</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">💰</div>
+                        <div class="stat-content">
+                            <h3>Custo Total (mês)</h3>
+                            <p>32.450.000 AOA</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">📈</div>
+                        <div class="stat-content">
+                            <h3>Média por Centro</h3>
+                            <p>1.352.083 AOA</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="card">
+                        <h3 class="card-title">Evolução Mensal de Custos</h3>
+                        <div class="chart-container">
+                            <canvas id="chartEvolutionCC"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="card-title">Distribuição por Tipo</h3>
+                        <div class="chart-container">
+                            <canvas id="chartDistributionCC"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Top 5 Centros de Custo</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Centro</th>
+                                    <th>Tipo</th>
+                                    <th>Custo Total</th>
+                                    <th>% do Orçamento</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cultura de Milho - Bengo</td>
+                                    <td><span class="badge badge-info">Cultura</span></td>
+                                    <td>8.450.000 AOA</td>
+                                    <td>92%</td>
+                                    <td><span class="badge badge-warning">Atenção</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Departamento de Produção</td>
+                                    <td><span class="badge badge-info">Departamento</span></td>
+                                    <td>6.230.000 AOA</td>
+                                    <td>78%</td>
+                                    <td><span class="badge badge-success">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Projeto Irrigação Sul</td>
+                                    <td><span class="badge badge-info">Projeto</span></td>
+                                    <td>5.890.000 AOA</td>
+                                    <td>65%</td>
+                                    <td><span class="badge badge-success">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Cultura de Soja - Huíla</td>
+                                    <td><span class="badge badge-info">Cultura</span></td>
+                                    <td>4.120.000 AOA</td>
+                                    <td>58%</td>
+                                    <td><span class="badge badge-success">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Atividade de Colheita</td>
+                                    <td><span class="badge badge-info">Atividade</span></td>
+                                    <td>3.760.000 AOA</td>
+                                    <td>71%</td>
+                                    <td><span class="badge badge-success">Normal</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Centros Tab -->
+            <div id="cc-centros" class="tab-content">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 class="card-title" style="margin: 0;">Gestão de Centros de Custo</h3>
+                        <button class="btn btn-primary" onclick="alert('Abrir formulário para criar novo centro')">
+                            ➕ Novo Centro
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Classificação</th>
+                                    <th>Responsável</th>
+                                    <th>Orçamento Anual</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CC-001</td>
+                                    <td>Cultura de Milho - Bengo</td>
+                                    <td><span class="badge badge-info">Cultura</span></td>
+                                    <td>Produtivo</td>
+                                    <td>João Silva</td>
+                                    <td>9.200.000 AOA</td>
+                                    <td><span class="badge badge-success">Ativo</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view" title="Ver">👁️</button>
+                                            <button class="icon-btn edit" title="Editar">✏️</button>
+                                            <button class="icon-btn delete" title="Eliminar">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CC-002</td>
+                                    <td>Departamento de Produção</td>
+                                    <td><span class="badge badge-info">Departamento</span></td>
+                                    <td>Administrativo</td>
+                                    <td>Maria Santos</td>
+                                    <td>8.000.000 AOA</td>
+                                    <td><span class="badge badge-success">Ativo</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view" title="Ver">👁️</button>
+                                            <button class="icon-btn edit" title="Editar">✏️</button>
+                                            <button class="icon-btn delete" title="Eliminar">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CC-003</td>
+                                    <td>Projeto Irrigação Sul</td>
+                                    <td><span class="badge badge-info">Projeto</span></td>
+                                    <td>Produtivo</td>
+                                    <td>Carlos Mendes</td>
+                                    <td>9.000.000 AOA</td>
+                                    <td><span class="badge badge-success">Ativo</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view" title="Ver">👁️</button>
+                                            <button class="icon-btn edit" title="Editar">✏️</button>
+                                            <button class="icon-btn delete" title="Eliminar">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lançamentos Tab -->
+            <div id="cc-lancamentos" class="tab-content">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 class="card-title" style="margin: 0;">Lançamentos de Custos</h3>
+                        <button class="btn btn-primary" onclick="alert('Abrir formulário para novo lançamento')">
+                            ➕ Novo Lançamento
+                        </button>
+                    </div>
+                    <div class="form-grid" style="margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label>Mês</label>
+                            <select>
+                                <option>Todos</option>
+                                <option selected>Janeiro 2025</option>
+                                <option>Fevereiro 2025</option>
+                                <option>Março 2025</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Centro de Custo</label>
+                            <select>
+                                <option>Todos</option>
+                                <option>Cultura de Milho - Bengo</option>
+                                <option>Departamento de Produção</option>
+                                <option>Projeto Irrigação Sul</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Centro</th>
+                                    <th>Descrição</th>
+                                    <th>Tipo de Custo</th>
+                                    <th>Categoria</th>
+                                    <th>Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>15/01/2025</td>
+                                    <td>Cultura de Milho</td>
+                                    <td>Compra de sementes híbridas</td>
+                                    <td><span class="badge badge-info">Direto</span></td>
+                                    <td>Insumos</td>
+                                    <td>2.450.000 AOA</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>14/01/2025</td>
+                                    <td>Departamento Produção</td>
+                                    <td>Salários equipe técnica</td>
+                                    <td><span class="badge badge-warning">Fixo</span></td>
+                                    <td>Pessoal</td>
+                                    <td>1.850.000 AOA</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>12/01/2025</td>
+                                    <td>Projeto Irrigação</td>
+                                    <td>Manutenção de equipamentos</td>
+                                    <td><span class="badge badge-info">Indireto</span></td>
+                                    <td>Manutenção</td>
+                                    <td>890.000 AOA</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO: ANÁLISE DE VIABILIDADE -->
+        <div id="viabilidade" class="module">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('viab-lista')">Lista de Projetos</div>
+                <div class="tab" onclick="showTab('viab-analise')">Análise Detalhada</div>
+                <div class="tab" onclick="showTab('viab-ranking')">Ranking</div>
+            </div>
+
+            <!-- Lista Tab -->
+            <div id="viab-lista" class="tab-content active">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 class="card-title" style="margin: 0;">Projetos em Análise</h3>
+                        <button class="btn btn-primary" onclick="alert('Criar novo projeto')">
+                            ➕ Novo Projeto
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome do Projeto</th>
+                                    <th>Tipo</th>
+                                    <th>Localização</th>
+                                    <th>VPL</th>
+                                    <th>TIR</th>
+                                    <th>Payback</th>
+                                    <th>Viabilidade</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Expansão Agrícola Bengo</td>
+                                    <td>Expansão</td>
+                                    <td>Bengo</td>
+                                    <td style="color: #16a34a; font-weight: 700;">45.250.000 AOA</td>
+                                    <td>18.5%</td>
+                                    <td>4.2 anos</td>
+                                    <td><span class="badge badge-success">✅ Viável</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view" onclick="showTab('viab-analise')">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Novo Sistema de Irrigação</td>
+                                    <td>Infraestrutura</td>
+                                    <td>Huíla</td>
+                                    <td style="color: #16a34a; font-weight: 700;">28.900.000 AOA</td>
+                                    <td>15.2%</td>
+                                    <td>5.8 anos</td>
+                                    <td><span class="badge badge-success">✅ Viável</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Cultura de Trigo - Sul</td>
+                                    <td>Nova Cultura</td>
+                                    <td>Namibe</td>
+                                    <td style="color: #dc2626; font-weight: 700;">-8.450.000 AOA</td>
+                                    <td>7.8%</td>
+                                    <td>9.5 anos</td>
+                                    <td><span class="badge badge-danger">❌ Inviável</span></td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análise Detalhada Tab -->
+            <div id="viab-analise" class="tab-content">
+                <div class="card">
+                    <h3 class="card-title">📊 Expansão Agrícola Bengo - Análise Detalhada</h3>
+
+                    <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 1rem; margin: 1.5rem 0; border-radius: 4px;">
+                        <h4 style="font-weight: 700; color: #16a34a; margin-bottom: 0.5rem;">✅ PROJETO VIÁVEL</h4>
+                        <p style="color: #15803d;">VPL positivo e TIR superior à taxa de desconto. Recomenda-se aprovação.</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">💰</div>
+                            <div class="stat-content">
+                                <h3>VPL (Valor Presente Líquido)</h3>
+                                <p style="color: #16a34a;">45.250.000 AOA</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📈</div>
+                            <div class="stat-content">
+                                <h3>TIR (Taxa Interna de Retorno)</h3>
+                                <p>18.5%</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon yellow">⏱️</div>
+                            <div class="stat-content">
+                                <h3>Payback Simples</h3>
+                                <p>4.2 anos</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">⏳</div>
+                            <div class="stat-content">
+                                <h3>Payback Descontado</h3>
+                                <p>5.8 anos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: #fafafa; margin: 1.5rem 0;">
+                        <h4 style="font-weight: 700; margin-bottom: 1rem;">Investimento Inicial</h4>
+                        <div class="form-grid" style="margin: 0;">
+                            <div>
+                                <p style="color: #6b7280; font-size: 0.875rem;">Terreno</p>
+                                <p style="font-weight: 700; font-size: 1.25rem;">15.000.000 AOA</p>
+                            </div>
+                            <div>
+                                <p style="color: #6b7280; font-size: 0.875rem;">Construção</p>
+                                <p style="font-weight: 700; font-size: 1.25rem;">25.000.000 AOA</p>
+                            </div>
+                            <div>
+                                <p style="color: #6b7280; font-size: 0.875rem;">Equipamentos</p>
+                                <p style="font-weight: 700; font-size: 1.25rem;">35.000.000 AOA</p>
+                            </div>
+                            <div>
+                                <p style="color: #6b7280; font-size: 0.875rem;">Capital de Giro</p>
+                                <p style="font-weight: 700; font-size: 1.25rem;">8.000.000 AOA</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #e5e7eb;">
+                            <p style="font-size: 0.875rem; color: #6b7280;">INVESTIMENTO TOTAL</p>
+                            <p style="font-size: 2rem; font-weight: 700; color: #16a34a;">83.000.000 AOA</p>
+                        </div>
+                    </div>
+
+                    <h4 style="font-weight: 700; margin: 2rem 0 1rem;">Análise de Sensibilidade</h4>
+                    <div class="scenario-comparison">
+                        <div class="scenario-card">
+                            <h4 style="color: #dc2626;">😟 Cenário Pessimista</h4>
+                            <div class="scenario-metric">
+                                <label>VPL</label>
+                                <value style="color: #dc2626;">18.400.000 AOA</value>
+                            </div>
+                            <div class="scenario-metric">
+                                <label>TIR</label>
+                                <value>12.8%</value>
+                            </div>
+                            <div class="scenario-metric">
+                                <label>Payback</label>
+                                <value>6.5 anos</value>
+                            </div>
+                        </div>
+                        <div class="scenario-card base">
+                            <h4 style="color: #0284c7;">😐 Cenário Base</h4>
+                            <div class="scenario-metric">
+                                <label>VPL</label>
+                                <value style="color: #16a34a;">45.250.000 AOA</value>
+                            </div>
+                            <div class="scenario-metric">
+                                <label>TIR</label>
+                                <value>18.5%</value>
+                            </div>
+                            <div class="scenario-metric">
+                                <label>Payback</label>
+                                <value>4.2 anos</value>
+                            </div>
+                        </div>
+                        <div class="scenario-card">
+                            <h4 style="color: #16a34a;">😊 Cenário Otimista</h4>
+                            <div class="scenario-metric">
+                                <label>VPL</label>
+                                <value style="color: #16a34a;">72.800.000 AOA</value>
+                            </div>
+                            <div class="scenario-metric">
+                                <label>TIR</label>
+                                <value>24.2%</value>
+                            </div>
+                            <div class="scenario-metric">
+                                <label>Payback</label>
+                                <value>3.1 anos</value>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container" style="height: 400px; margin-top: 2rem;">
+                        <canvas id="chartSensitivity"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranking Tab -->
+            <div id="viab-ranking" class="tab-content">
+                <div class="card">
+                    <h3 class="card-title">🏆 Ranking de Projetos por VPL</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Posição</th>
+                                    <th>Projeto</th>
+                                    <th>VPL</th>
+                                    <th>TIR</th>
+                                    <th>Índice de Rentabilidade</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #f0fdf4;">
+                                    <td><span style="font-size: 1.5rem;">🥇</span></td>
+                                    <td><strong>Expansão Agrícola Bengo</strong></td>
+                                    <td style="color: #16a34a; font-weight: 700;">45.250.000 AOA</td>
+                                    <td>18.5%</td>
+                                    <td>1.55</td>
+                                    <td><span class="badge badge-success">Viável</span></td>
+                                </tr>
+                                <tr style="background: #fafafa;">
+                                    <td><span style="font-size: 1.5rem;">🥈</span></td>
+                                    <td><strong>Novo Sistema de Irrigação</strong></td>
+                                    <td style="color: #16a34a; font-weight: 700;">28.900.000 AOA</td>
+                                    <td>15.2%</td>
+                                    <td>1.42</td>
+                                    <td><span class="badge badge-success">Viável</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="font-size: 1.5rem;">🥉</span></td>
+                                    <td><strong>Modernização Armazéns</strong></td>
+                                    <td style="color: #16a34a; font-weight: 700;">12.500.000 AOA</td>
+                                    <td>13.8%</td>
+                                    <td>1.28</td>
+                                    <td><span class="badge badge-success">Viável</span></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Cultura de Trigo - Sul</td>
+                                    <td style="color: #dc2626; font-weight: 700;">-8.450.000 AOA</td>
+                                    <td>7.8%</td>
+                                    <td>0.85</td>
+                                    <td><span class="badge badge-danger">Inviável</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO: RENTABILIDADE POR CULTURA -->
+        <div id="rentabilidade" class="module">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('rent-dashboard')">Dashboard</div>
+                <div class="tab" onclick="showTab('rent-analises')">Análises</div>
+                <div class="tab" onclick="showTab('rent-comparacao')">Comparação</div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="rent-dashboard" class="tab-content active">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 class="card-title" style="margin: 0;">Análise Consolidada - Ano 2024</h3>
+                        <select style="padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                        </select>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon green">🌾</div>
+                            <div class="stat-content">
+                                <h3>Culturas Analisadas</h3>
+                                <p>6</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">📏</div>
+                            <div class="stat-content">
+                                <h3>Área Total</h3>
+                                <p>1.250 ha</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon yellow">💰</div>
+                            <div class="stat-content">
+                                <h3>Receita Total</h3>
+                                <p>185.750.000 AOA</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">📊</div>
+                            <div class="stat-content">
+                                <h3>Margem Líquida Média</h3>
+                                <p style="color: #16a34a;">28.5%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-grid">
+                        <div class="card">
+                            <h3 class="card-title">Margem Líquida por Cultura (%)</h3>
+                            <div class="chart-container">
+                                <canvas id="chartMarginCultura"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="card-title">Rentabilidade por Hectare</h3>
+                            <div class="chart-container">
+                                <canvas id="chartRentHa"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análises Tab -->
+            <div id="rent-analises" class="tab-content">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 class="card-title" style="margin: 0;">Análises de Rentabilidade</h3>
+                        <button class="btn btn-primary" onclick="alert('Nova análise')">
+                            ➕ Nova Análise
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ano</th>
+                                    <th>Cultura</th>
+                                    <th>Área (ha)</th>
+                                    <th>Produção (kg)</th>
+                                    <th>Receita Total</th>
+                                    <th>Custo Total</th>
+                                    <th>Margem Líquida</th>
+                                    <th>ROI</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>🌱 Soja</td>
+                                    <td>320 ha</td>
+                                    <td>960.000</td>
+                                    <td>52.800.000 AOA</td>
+                                    <td>34.320.000 AOA</td>
+                                    <td style="color: #16a34a; font-weight: 700;">35.2%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">53.8%</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>🌽 Milho</td>
+                                    <td>450 ha</td>
+                                    <td>2.250.000</td>
+                                    <td>45.000.000 AOA</td>
+                                    <td>32.850.000 AOA</td>
+                                    <td style="color: #16a34a; font-weight: 700;">27.0%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">37.0%</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>🥔 Batata</td>
+                                    <td>180 ha</td>
+                                    <td>3.600.000</td>
+                                    <td>36.000.000 AOA</td>
+                                    <td>28.440.000 AOA</td>
+                                    <td style="color: #16a34a; font-weight: 700;">21.0%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">26.6%</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2024</td>
+                                    <td>🌾 Trigo</td>
+                                    <td>150 ha</td>
+                                    <td>450.000</td>
+                                    <td>22.500.000 AOA</td>
+                                    <td>18.900.000 AOA</td>
+                                    <td style="color: #16a34a; font-weight: 700;">16.0%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">19.0%</td>
+                                    <td>
+                                        <div class="action-btns">
+                                            <button class="icon-btn view">👁️</button>
+                                            <button class="icon-btn edit">✏️</button>
+                                            <button class="icon-btn delete">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparação Tab -->
+            <div id="rent-comparacao" class="tab-content">
+                <div class="card">
+                    <h3 class="card-title">🔍 Comparação Entre Culturas - 2024</h3>
+
+                    <div class="chart-container" style="height: 400px; margin: 2rem 0;">
+                        <canvas id="chartComparison"></canvas>
+                    </div>
+
+                    <div class="card" style="background: #fafafa; margin-top: 2rem;">
+                        <h4 style="font-weight: 700; margin-bottom: 1.5rem;">Ranking de Performance</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Posição</th>
+                                    <th>Cultura</th>
+                                    <th>Margem Líquida</th>
+                                    <th>ROI</th>
+                                    <th>Receita/ha</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: #f0fdf4;">
+                                    <td><span style="font-size: 1.5rem;">🥇</span></td>
+                                    <td><strong>🌱 Soja</strong></td>
+                                    <td style="color: #16a34a; font-weight: 700;">35.2%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">53.8%</td>
+                                    <td>165.000 AOA</td>
+                                    <td><span class="badge badge-success">Excelente</span></td>
+                                </tr>
+                                <tr style="background: #fafafa;">
+                                    <td><span style="font-size: 1.5rem;">🥈</span></td>
+                                    <td><strong>🌽 Milho</strong></td>
+                                    <td style="color: #16a34a; font-weight: 700;">27.0%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">37.0%</td>
+                                    <td>100.000 AOA</td>
+                                    <td><span class="badge badge-success">Muito Bom</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="font-size: 1.5rem;">🥉</span></td>
+                                    <td><strong>🥔 Batata</strong></td>
+                                    <td style="color: #16a34a; font-weight: 700;">21.0%</td>
+                                    <td style="color: #16a34a; font-weight: 700;">26.6%</td>
+                                    <td>200.000 AOA</td>
+                                    <td><span class="badge badge-info">Bom</span></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>🌾 Trigo</td>
+                                    <td style="color: #d97706; font-weight: 700;">16.0%</td>
+                                    <td style="color: #d97706; font-weight: 700;">19.0%</td>
+                                    <td>150.000 AOA</td>
+                                    <td><span class="badge badge-warning">Regular</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO: CENTRAL DE NOTIFICAÇÕES -->
+        <div id="notificacoes" class="module">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 class="card-title" style="margin: 0;">🔔 Central de Notificações</h3>
+                    <div style="display: flex; gap: 1rem;">
+                        <select style="padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <option>Todas</option>
+                            <option>Não lidas</option>
+                            <option>Lidas</option>
+                        </select>
+                        <select style="padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 6px;">
+                            <option>Todos os tipos</option>
+                            <option>⚠️ Alertas</option>
+                            <option>ℹ️ Informações</option>
+                            <option>✅ Sucesso</option>
+                            <option>❌ Erros</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="alert('Marcar todas como lidas')">
+                            Marcar todas como lidas
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">🔔</div>
+                        <div class="stat-content">
+                            <h3>Total de Notificações</h3>
+                            <p>47</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📬</div>
+                        <div class="stat-content">
+                            <h3>Não Lidas</h3>
+                            <p>3</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-content">
+                            <h3>Lidas</h3>
+                            <p>44</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">⏰</div>
+                        <div class="stat-content">
+                            <h3>Última Notificação</h3>
+                            <p style="font-size: 1rem;">Há 2 horas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <!-- Notificação não lida -->
+                    <div class="card" style="border-left: 4px solid #d97706; margin-bottom: 1rem; background: #fffbeb;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 1rem; flex: 1;">
+                                <span style="font-size: 2rem;">⚠️</span>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <h4 style="font-weight: 700;">Orçamento do Centro de Custo excedido</h4>
+                                        <span class="badge badge-warning">Alerta</span>
+                                        <span class="badge" style="background: #dbeafe; color: #0284c7;">Não lida</span>
+                                    </div>
+                                    <p style="color: #6b7280; margin-bottom: 0.75rem;">
+                                        O Centro de Custo "Cultura de Milho - Bengo" ultrapassou 90% do orçamento anual.
+                                        Atualmente em 8.450.000 AOA de 9.200.000 AOA orçados.
+                                    </p>
+                                    <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: #9ca3af;">
+                                        <span>⏰ Há 2 horas</span>
+                                        <span>📂 Centros de Custo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="icon-btn" onclick="alert('Marcado como lido')" title="Marcar como lida">✓</button>
+                                <button class="icon-btn delete" onclick="alert('Notificação eliminada')" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notificação não lida -->
+                    <div class="card" style="border-left: 4px solid #16a34a; margin-bottom: 1rem; background: #f0fdf4;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 1rem; flex: 1;">
+                                <span style="font-size: 2rem;">✅</span>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <h4 style="font-weight: 700;">Análise de Viabilidade concluída</h4>
+                                        <span class="badge badge-success">Sucesso</span>
+                                        <span class="badge" style="background: #dbeafe; color: #0284c7;">Não lida</span>
+                                    </div>
+                                    <p style="color: #6b7280; margin-bottom: 0.75rem;">
+                                        A análise do projeto "Expansão Agrícola Bengo" foi concluída com sucesso.
+                                        VPL positivo de 45.250.000 AOA. TIR de 18.5%. Projeto VIÁVEL.
+                                    </p>
+                                    <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: #9ca3af;">
+                                        <span>⏰ Há 5 horas</span>
+                                        <span>💼 Viabilidade de Projetos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="icon-btn" onclick="alert('Marcado como lido')" title="Marcar como lida">✓</button>
+                                <button class="icon-btn delete" onclick="alert('Notificação eliminada')" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notificação não lida -->
+                    <div class="card" style="border-left: 4px solid #0284c7; margin-bottom: 1rem; background: #eff6ff;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 1rem; flex: 1;">
+                                <span style="font-size: 2rem;">📊</span>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <h4 style="font-weight: 700;">Rentabilidade por Cultura atualizada</h4>
+                                        <span class="badge badge-info">Informação</span>
+                                        <span class="badge" style="background: #dbeafe; color: #0284c7;">Não lida</span>
+                                    </div>
+                                    <p style="color: #6b7280; margin-bottom: 0.75rem;">
+                                        A análise consolidada de 2024 está disponível. Soja apresenta melhor margem líquida (35.2%),
+                                        seguida por Milho (27.0%).
+                                    </p>
+                                    <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: #9ca3af;">
+                                        <span>⏰ Há 1 dia</span>
+                                        <span>🌾 Rentabilidade por Cultura</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="icon-btn" onclick="alert('Marcado como lido')" title="Marcar como lida">✓</button>
+                                <button class="icon-btn delete" onclick="alert('Notificação eliminada')" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notificação lida -->
+                    <div class="card" style="border-left: 4px solid #e5e7eb; margin-bottom: 1rem; opacity: 0.7;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 1rem; flex: 1;">
+                                <span style="font-size: 2rem;">ℹ️</span>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <h4 style="font-weight: 700;">Relatório mensal de tesouraria disponível</h4>
+                                        <span class="badge badge-info">Informação</span>
+                                    </div>
+                                    <p style="color: #6b7280; margin-bottom: 0.75rem;">
+                                        O relatório de tesouraria de Janeiro 2025 já está disponível para consulta.
+                                    </p>
+                                    <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: #9ca3af;">
+                                        <span>⏰ Há 2 dias</span>
+                                        <span>💰 Tesouraria</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="icon-btn delete" onclick="alert('Notificação eliminada')" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notificação lida -->
+                    <div class="card" style="border-left: 4px solid #e5e7eb; margin-bottom: 1rem; opacity: 0.7;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; gap: 1rem; flex: 1;">
+                                <span style="font-size: 2rem;">💵</span>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <h4 style="font-weight: 700;">Novo lançamento no centro de custo</h4>
+                                        <span class="badge badge-info">Informação</span>
+                                    </div>
+                                    <p style="color: #6b7280; margin-bottom: 0.75rem;">
+                                        Novo lançamento de 2.450.000 AOA registrado em "Cultura de Milho - Bengo"
+                                        (Compra de sementes híbridas).
+                                    </p>
+                                    <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: #9ca3af;">
+                                        <span>⏰ Há 3 dias</span>
+                                        <span>📊 Centros de Custo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="icon-btn delete" onclick="alert('Notificação eliminada')" title="Eliminar">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation between modules
+        function showModule(moduleId) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(moduleId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Tab navigation
+        function showTab(tabId) {
+            const parent = event.target.closest('.module');
+            parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            event.target.classList.add('active');
+            parent.querySelector('#' + tabId).classList.add('active');
+        }
+
+        // Notifications
+        function toggleNotifications() {
+            document.getElementById('notifDropdown').classList.toggle('active');
+        }
+
+        function markRead(element) {
+            element.classList.remove('unread');
+            element.style.opacity = '0.7';
+            updateNotifCount();
+        }
+
+        function markAllRead() {
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+                item.style.opacity = '0.7';
+            });
+            updateNotifCount();
+            alert('Todas as notificações foram marcadas como lidas');
+        }
+
+        function updateNotifCount() {
+            const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+            document.getElementById('notifCount').textContent = unreadCount;
+            if (unreadCount === 0) {
+                document.getElementById('notifCount').style.display = 'none';
+            }
+        }
+
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notifDropdown');
+            const bell = document.querySelector('.notification-bell');
+            if (!dropdown.contains(event.target) && !bell.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Initialize Charts
+        window.addEventListener('DOMContentLoaded', function() {
+            // Chart 1: Evolução Mensal Centros de Custo
+            const ctxEvolutionCC = document.getElementById('chartEvolutionCC');
+            if (ctxEvolutionCC) {
+                new Chart(ctxEvolutionCC, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Jan'],
+                        datasets: [{
+                            label: 'Custos Mensais',
+                            data: [28500000, 30200000, 29800000, 31500000, 32100000, 33000000, 32450000],
+                            borderColor: '#16a34a',
+                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return (value / 1000000) + 'M';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart 2: Distribuição por Tipo
+            const ctxDistributionCC = document.getElementById('chartDistributionCC');
+            if (ctxDistributionCC) {
+                new Chart(ctxDistributionCC, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Cultura', 'Departamento', 'Projeto', 'Atividade'],
+                        datasets: [{
+                            data: [12500000, 8900000, 7200000, 3850000],
+                            backgroundColor: ['#16a34a', '#0284c7', '#d97706', '#7c3aed']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // Chart 3: Sensitivity Analysis
+            const ctxSensitivity = document.getElementById('chartSensitivity');
+            if (ctxSensitivity) {
+                new Chart(ctxSensitivity, {
+                    type: 'bar',
+                    data: {
+                        labels: ['VPL (milhões)', 'TIR (%)', 'Payback (anos)'],
+                        datasets: [
+                            {
+                                label: 'Pessimista',
+                                data: [18.4, 12.8, 6.5],
+                                backgroundColor: '#dc2626'
+                            },
+                            {
+                                label: 'Base',
+                                data: [45.25, 18.5, 4.2],
+                                backgroundColor: '#0284c7'
+                            },
+                            {
+                                label: 'Otimista',
+                                data: [72.8, 24.2, 3.1],
+                                backgroundColor: '#16a34a'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            // Chart 4: Margem Líquida por Cultura
+            const ctxMarginCultura = document.getElementById('chartMarginCultura');
+            if (ctxMarginCultura) {
+                new Chart(ctxMarginCultura, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Soja', 'Milho', 'Batata', 'Trigo', 'Feijão', 'Arroz'],
+                        datasets: [{
+                            label: 'Margem Líquida (%)',
+                            data: [35.2, 27.0, 21.0, 16.0, 24.5, 19.8],
+                            backgroundColor: [
+                                '#16a34a',
+                                '#15803d',
+                                '#22c55e',
+                                '#4ade80',
+                                '#86efac',
+                                '#bbf7d0'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart 5: Rentabilidade por Hectare
+            const ctxRentHa = document.getElementById('chartRentHa');
+            if (ctxRentHa) {
+                new Chart(ctxRentHa, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Batata', 'Soja', 'Trigo', 'Feijão', 'Arroz', 'Milho'],
+                        datasets: [{
+                            label: 'Receita/ha (AOA)',
+                            data: [200000, 165000, 150000, 145000, 130000, 100000],
+                            backgroundColor: '#0284c7'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return (value / 1000) + 'K';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart 6: Comparison
+            const ctxComparison = document.getElementById('chartComparison');
+            if (ctxComparison) {
+                new Chart(ctxComparison, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Margem Líquida', 'ROI', 'Produtividade', 'Receita/ha', 'Sustentabilidade'],
+                        datasets: [
+                            {
+                                label: 'Soja',
+                                data: [35.2, 53.8, 85, 82.5, 78],
+                                borderColor: '#16a34a',
+                                backgroundColor: 'rgba(22, 163, 74, 0.2)'
+                            },
+                            {
+                                label: 'Milho',
+                                data: [27.0, 37.0, 90, 50, 85],
+                                borderColor: '#0284c7',
+                                backgroundColor: 'rgba(2, 132, 199, 0.2)'
+                            },
+                            {
+                                label: 'Batata',
+                                data: [21.0, 26.6, 80, 100, 65],
+                                borderColor: '#d97706',
+                                backgroundColor: 'rgba(217, 119, 6, 0.2)'
+                            },
+                            {
+                                label: 'Trigo',
+                                data: [16.0, 19.0, 60, 75, 70],
+                                borderColor: '#7c3aed',
+                                backgroundColor: 'rgba(124, 58, 237, 0.2)'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
